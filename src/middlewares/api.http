@@ -1,0 +1,123 @@
+@url = http://localhost:3000
+@email = user1@example.com
+@passward = 123123aa
+@userName = user1
+#takss variables
+@description = 6th
+@done = false
+
+###
+
+# @name createNewUser
+POST {{url}}/users HTTP/1.1
+Content-Type:  application/json
+
+{
+    "name" : "{{userName}}",
+    "email" : "{{email}}",
+    "passward" : "{{passward}}"
+}
+###
+
+# @name logout
+POST {{url}}/users/logout HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getProfile
+GET {{url}}/users/me HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name logoutAll 
+POST {{url}}/users/logoutAll HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+###
+
+# @name deleteUser
+DELETE {{url}}/users/me HTTP/1.1
+Authorization:Bearer {{authToken}}
+
+###
+
+# @name updateProfile
+PATCH  {{url}}/users/me
+Content-Type:  application/json
+Authorization:Bearer {{authToken}}
+
+{
+    "email" : "{{email}}",
+    "age"  : 33,
+    "passward" : "123123bb"
+}
+###
+
+# @name login
+POST {{url}}/users/login
+Content-Type: application/json
+
+{
+    "email" : "{{email}}",
+    "passward" : "{{passward}}"
+}
+###
+# @name deleteAvatar
+DELETE {{url}}/users/me/avatar HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name displayAvatar
+GET {{url}}/users/622adc6470ce541cb4e8b64e/avatar HTTP/1.1
+
+###
+#tasks requests
+
+# @name createTask
+POST {{url}}/tasks HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "description" : "{{description}}",
+    "done" : "{{done}}"
+}
+###
+
+# @name readTask
+GET {{url}}/tasks/621ddad30b8a2e2008313313 HTTP/1.1
+Authorization: Bearer {{authToken}}
+###
+
+# @name readAllTasks
+GET {{url}}/tasks?limit=3&skip=2&sortedBy=createdAt_aesc HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name updateTask
+PATCH {{url}}/tasks/622ae92f151587313402813c
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "description" : "{{description}}",
+    "done" : "{{done}}"
+}
+###
+
+# @name deleteTask
+DELETE {{url }}/tasks/621c8055b0829f1ac04314de
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+###
+
+@authToken = {{login.response.body.$.token}}
+
+###
+
