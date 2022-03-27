@@ -1,9 +1,9 @@
 @url = http://localhost:3000
-@email = user1@example.com
+@email = dylr635@gmail.com
 @passward = 123123aa
-@userName = user1
+@userName = dylan richard
 #takss variables
-@description = 6th
+@description = offered prayer
 @done = false
 
 ###

@@ -83,13 +83,15 @@ mySchema.methods.toJSON= function(){
     const userObject = this.toObject()
 delete     userObject.passward 
 delete     userObject.tokens
+delete     userObject.avatar
+
 return userObject;
 } // function ends
 
 mySchema.methods.userAuthToken = async function(){
     // here this refers to document
 // console.log(this);
-    const token = sign( {_id : this._id.toString()} , "noSecret")
+    const token = sign( {_id : this._id.toString()} , process.env.JWT_SECRET)
 this.tokens = this.tokens.concat({ token})
 await this.save()
 return token;

@@ -2,10 +2,12 @@
 // create a new router
 // set up your routs
 //  and register with your express router
+const sharp = require('sharp');
 const multer = require('multer');
 const express = require('express');
 const { auth } = require('../middlewares/auth');
 const User = require('../models/user');
+const { sendWelcomeMail, sendGoodByeMail } = require('../emails/accounts');
 
 const router = new express.Router()
 const upload = multer({
@@ -16,7 +18,7 @@ const upload = multer({
         if(!(file.originalname.endsWith('.jpg') || file.originalname.endsWith('.png') || file.originalname.endsWith('.jpeg'))){
              return cb(new Error("invalid file type"))
          } // if ends
-         return cb(undefined,true)
+         cb(undefined,true)
      }
     })
 // users end points
@@ -26,6 +28,7 @@ router.post('/users', async (req,res)=> {
     // you can  handle indivivual promises errors inside async function   like the promise we are using  with await  we can use try and catch to catch any error if the there was any error while  saving document
 try {
     await me.save() 
+    sendWelcomeMail(me.name,me.email)
 const token = await me.userAuthToken()
     res.status(201).send({ me , token})
 } catch (error) {
@@ -72,6 +75,7 @@ router.delete('/users/me', auth ,async (req,res)=> {
     try{
         const doc = await User.findByIdAndDelete(req.user._id)
         await doc.remove()
+        sendGoodByeMail(req.user.name,req.user.email)
         res.send(req.user);
     } catch(e){
         res.status(500).send(e)
@@ -112,7 +116,8 @@ try {
 }) // router ends
 
 router.post('/users/me/avatar', auth ,upload.single('avatar'), async (req,res)=> {
-    req.user.avatar = req.file.buffer
+    const buffer = await  sharp(req.file.buffer).resize({width : 250, height : 250}).png().toBuffer()
+    req.user.avatar = buffer
     await req.user.save()
     res.status(200).send()
 }, 
@@ -130,7 +135,6 @@ router.delete('/users/me/avatar' , auth , async (req,res)=> {
 router.get('/users/:id/avatar' , async (req,res)=> {
     try {
         const user = await User.findById(req.params.id)
-        console.log(user)
         if(!(user || user.avatar)){
             throw new Error()
         } // if ends
